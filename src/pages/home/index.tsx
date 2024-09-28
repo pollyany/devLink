@@ -1,3 +1,6 @@
+import { FaFacebook, FaInstagram, FaYoutube } from "react-icons/fa";
+import Social from "../../components/social";
+
 export function Home() {
   return (
     <div className="flex flex-col w-full py-4 items-center justify-center">
@@ -13,7 +16,17 @@ export function Home() {
           </a>
         </section>
 
-        <footer className="flex justify-center gap-3 my-4"></footer>
+        <footer className="flex justify-center gap-3 my-4">
+          <Social url="https://github.com/pollyany/devLink">
+            <FaFacebook size={35} color="#fff" />
+          </Social>
+          <Social url="https://github.com/pollyany/devLink">
+            <FaYoutube size={35} color="#fff" />
+          </Social>
+          <Social url="https://github.com/pollyany/devLink">
+            <FaInstagram size={35} color="#fff" />
+          </Social>
+        </footer>
       </main>
     </div>
   );
