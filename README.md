@@ -16,6 +16,7 @@ Projeto baseado no Linktree com sistema de login e de Admin.
 
 Este projeto foi desenvolvido com as seguintes tecnologias:
 
+- Vite
 - React Js
 - Firebase
 - React Router
