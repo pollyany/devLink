@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import Header from "../../components/Header";
 import Input from "../../components/Input";
 import { FiTrash } from "react-icons/fi";
+import { addDoc, collection } from "firebase/firestore";
+import { db } from "../../services/firebaseConnection";
 
 export default function Admin() {
   const [urlInput, setUrlInput] = useState("");
@@ -9,15 +11,38 @@ export default function Admin() {
   const [textColorInput, setTextColorInput] = useState("#f1f1f1");
   const [bgColorInput, setBgColorInput] = useState("#121212");
 
+  function handleRegister(e: FormEvent) {
+    e.preventDefault();
+
+    addDoc(collection(db, "links"), {
+      name: nameInput,
+      url: urlInput,
+      bg: bgColorInput,
+      color: textColorInput,
+      created: new Date()
+    })
+    .then(() => {
+      setNameInput("")
+      setUrlInput("")
+    })
+    .catch((error) => {
+      console.log("ERRO AO CADASTRAR NO BANCO" + error)
+    })
+  }
+
   return (
     <div className="flex items-center flex-col min-h-screen pb-7 px-2">
       <Header />
 
-      <form className="flex flex-col mt-8 mb-3 w-full max-w-xl">
+      <form
+        className="flex flex-col mt-8 mb-3 w-full max-w-xl"
+        onSubmit={handleRegister}
+      >
         <label className="text-white font-medium mt-2 mb-2">Nome do Link</label>
         <Input
           placeholder="Digite o nome do Link..."
           value={nameInput}
+          required
           onChange={(e) => setNameInput(e.target.value)}
         />
 
@@ -26,6 +51,7 @@ export default function Admin() {
           type="url"
           placeholder="Digite a url..."
           value={urlInput}
+          required
           onChange={(e) => setUrlInput(e.target.value)}
         />
 
@@ -38,6 +64,7 @@ export default function Admin() {
             <input
               type="color"
               value={bgColorInput}
+              required
               onChange={(e) => setBgColorInput(e.target.value)}
             />
           </div>
@@ -50,6 +77,7 @@ export default function Admin() {
             <input
               type="color"
               value={textColorInput}
+              required
               onChange={(e) => setTextColorInput(e.target.value)}
             />
           </div>
