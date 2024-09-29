@@ -1,15 +1,26 @@
-import { FormEvent, useState } from "react";
+/* eslint-disable prefer-const */
+import { FormEvent, useEffect, useState } from "react";
 import Header from "../../components/Header";
 import Input from "../../components/Input";
 import { FiTrash } from "react-icons/fi";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { db } from "../../services/firebaseConnection";
+
+interface linkProps {
+  id: string;
+  name: string;
+  url: string;
+  bg: string;
+  color: string;
+}
 
 export default function Admin() {
   const [urlInput, setUrlInput] = useState("");
   const [nameInput, setNameInput] = useState("");
   const [textColorInput, setTextColorInput] = useState("#f1f1f1");
   const [bgColorInput, setBgColorInput] = useState("#121212");
+  
+  const [links, setLinks] = useState<linkProps[]>([]);
 
   function handleRegister(e: FormEvent) {
     e.preventDefault();
@@ -29,6 +40,34 @@ export default function Admin() {
       console.log("ERRO AO CADASTRAR NO BANCO" + error)
     })
   }
+
+  useEffect(() => {
+    const linksRef = collection(db, "links");
+    const queryRef = query(linksRef, orderBy("created", "asc"))
+
+    // fica observando o banco (listener)
+    const unsub = onSnapshot(queryRef, (snapshot) => {
+
+      let lista = [] as linkProps[];
+
+      snapshot.forEach((doc) => {
+        lista.push({
+          id: doc.id,
+          name: doc.data().name,
+          url: doc.data().url,
+          bg: doc.data().bg,
+          color: doc.data().color
+        })
+      })
+
+      setLinks(lista)
+      
+    })
+
+    return () => {
+      unsub() //remove o listener
+    }
+  }, [])
 
   return (
     <div className="flex items-center flex-col min-h-screen pb-7 px-2">
