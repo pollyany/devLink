@@ -3,7 +3,15 @@ import { FormEvent, useEffect, useState } from "react";
 import Header from "../../components/Header";
 import Input from "../../components/Input";
 import { FiTrash } from "react-icons/fi";
-import { addDoc, collection, onSnapshot, orderBy, query } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  orderBy,
+  query,
+} from "firebase/firestore";
 import { db } from "../../services/firebaseConnection";
 
 interface linkProps {
@@ -19,7 +27,7 @@ export default function Admin() {
   const [nameInput, setNameInput] = useState("");
   const [textColorInput, setTextColorInput] = useState("#f1f1f1");
   const [bgColorInput, setBgColorInput] = useState("#121212");
-  
+
   const [links, setLinks] = useState<linkProps[]>([]);
 
   function handleRegister(e: FormEvent) {
@@ -30,24 +38,23 @@ export default function Admin() {
       url: urlInput,
       bg: bgColorInput,
       color: textColorInput,
-      created: new Date()
+      created: new Date(),
     })
-    .then(() => {
-      setNameInput("")
-      setUrlInput("")
-    })
-    .catch((error) => {
-      console.log("ERRO AO CADASTRAR NO BANCO" + error)
-    })
+      .then(() => {
+        setNameInput("");
+        setUrlInput("");
+      })
+      .catch((error) => {
+        console.log("ERRO AO CADASTRAR NO BANCO" + error);
+      });
   }
 
   useEffect(() => {
     const linksRef = collection(db, "links");
-    const queryRef = query(linksRef, orderBy("created", "asc"))
+    const queryRef = query(linksRef, orderBy("created", "asc"));
 
     // fica observando o banco (listener)
     const unsub = onSnapshot(queryRef, (snapshot) => {
-
       let lista = [] as linkProps[];
 
       snapshot.forEach((doc) => {
@@ -56,18 +63,23 @@ export default function Admin() {
           name: doc.data().name,
           url: doc.data().url,
           bg: doc.data().bg,
-          color: doc.data().color
-        })
-      })
+          color: doc.data().color,
+        });
+      });
 
-      setLinks(lista)
-      
-    })
+      setLinks(lista);
+    });
 
     return () => {
-      unsub() //remove o listener
-    }
-  }, [])
+      unsub(); //remove o listener
+    };
+  }, []);
+
+  async function handleDeleteLink(id: string) {
+    const docRef = doc(db, "links", id)
+
+    await deleteDoc(docRef)
+  }
 
   return (
     <div className="flex items-center flex-col min-h-screen pb-7 px-2">
@@ -153,14 +165,23 @@ export default function Admin() {
 
       <h2 className="text-white font-bold mb-4 text-2xl">Meus links</h2>
 
-      <article className="flex items-center justify-between w-11/12 max-w-xl rounded py-3 px-2 mb-2 select-none">
-        <p>Canal do youtube</p>
-        <div>
-          <button className="border border-dashed p-1 rounded bg-neutral-800">
-            <FiTrash size={18} color="#fff" />
-          </button>
-        </div>
-      </article>
+      {links.map((item) => (
+        <article
+          key={item.id}
+          className="flex items-center justify-between w-11/12 max-w-xl rounded py-3 px-2 mb-2 select-none"
+          style={{ backgroundColor: item.bg, color: item.color }}
+        >
+          <p>{item.name}</p>
+          <div>
+            <button
+              className="border border-dashed p-1 rounded bg-neutral-800"
+              onClick={() => handleDeleteLink(item.id)}
+            >
+              <FiTrash size={18} color="#fff" />
+            </button>
+          </div>
+        </article>
+      ))}
     </div>
   );
 }
