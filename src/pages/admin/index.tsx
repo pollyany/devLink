@@ -14,7 +14,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../../services/firebaseConnection";
 
-interface linkProps {
+interface LinkProps {
   id: string;
   name: string;
   url: string;
@@ -28,7 +28,7 @@ export default function Admin() {
   const [textColorInput, setTextColorInput] = useState("#f1f1f1");
   const [bgColorInput, setBgColorInput] = useState("#121212");
 
-  const [links, setLinks] = useState<linkProps[]>([]);
+  const [links, setLinks] = useState<LinkProps[]>([]);
 
   function handleRegister(e: FormEvent) {
     e.preventDefault();
@@ -55,7 +55,7 @@ export default function Admin() {
 
     // fica observando o banco (listener)
     const unsub = onSnapshot(queryRef, (snapshot) => {
-      let lista = [] as linkProps[];
+      let lista = [] as LinkProps[];
 
       snapshot.forEach((doc) => {
         lista.push({
