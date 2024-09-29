@@ -7,7 +7,8 @@ interface PrivateProps {
   children: ReactNode;
 }
 
-export default function Private({ children }: PrivateProps): never {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default function Private({ children }: PrivateProps): any {
   const [loading, setLoading] = useState(true);
   const [signed, setSigned] = useState(false);
 
