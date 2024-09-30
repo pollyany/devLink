@@ -24,6 +24,7 @@ export default function Private({ children }: PrivateProps): any {
         setLoading(false);
         setSigned(true);
       } else {
+        
         setLoading(false);
         setSigned(false);
       }
@@ -39,7 +40,7 @@ export default function Private({ children }: PrivateProps): any {
   }
 
   if (!signed) {
-    <Navigate to="/login" />;
+    return <Navigate to="/login" />;
   }
 
   return children;
