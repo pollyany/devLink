@@ -18,6 +18,7 @@ Este projeto foi desenvolvido com as seguintes tecnologias:
 
 - Vite
 - React Js
+- Typescript
 - Firebase
 - React Router
 - Tailwind Css
